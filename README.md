@@ -1,3 +1,4 @@
+Model: gpt-4-turbo-preview
 # GPT CLI
 
 GPT CLI is a versatile command-line tool that enables ChatGPT integration into CLI and Vim environments. It facilitates executing ChatGPT queries from anywhere cli programs can be run, making it easier to analyze or modify code, generate documentation, and more.
@@ -12,6 +13,14 @@ GPT CLI is a versatile command-line tool that enables ChatGPT integration into C
 ### Prerequisites
 
 Set the `OPENAI_API_KEY` environment variable to authenticate API requests. Optionally, set `OPENAI_DEFAULT_MODEL` to specify the default language model.
+
+### Installation
+
+For Unix-like environments, you can use the `install.sh` script located in the root of this project:
+
+```bash
+./install.sh
+```
 
 ### Usage
 
@@ -52,3 +61,4 @@ For the latest build information, see the GitHub Actions build status:
 [![Rust](https://github.com/oranellis/gptcli/actions/workflows/rust.yml/badge.svg)](https://github.com/oranellis/gptcli/actions/workflows/rust.yml)
 
 Leverage GPT CLI to streamline your CLI and Vim interactions through ChatGPT's capabilities.
+
