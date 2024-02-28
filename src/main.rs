@@ -4,10 +4,14 @@ use openai::set_key;
 use tokio;
 
 fn remove_backtick_lines(input_text: &str) -> String {
-    input_text.lines()
-        .filter(|line| !line.trim_start().starts_with("```"))
-        .collect::<Vec<&str>>()
-        .join("\n")
+    let mut lines = input_text.lines().collect::<Vec<&str>>();
+    if lines.first().map_or(false, |line| line.trim().starts_with("```")) {
+        lines.remove(0);
+    }
+    if lines.last().map_or(false, |line| line.trim().starts_with("```")) {
+        lines.pop();
+    }
+    lines.join("\n")
 }
 
 fn get_std_in() -> io::Result<Option<String>> {
@@ -40,7 +44,11 @@ async fn main() {
 
     set_key(api_key);
 
-    let system_message = "You are a helpful general assistant operating in an arch linux command line aiming to provide concise responses. When asked to provide code samples, include only the code block with no additional text.".to_string();
+    // Check for OPENAI_DEFAULT_MODEL environment variable to set the model dynamically
+    let model = env::var("OPENAI_DEFAULT_MODEL").unwrap_or_else(|_| "gpt-3.5-turbo".to_string());
+    println!("Model: {}", &model);
+
+    let system_message = "You are a helpful general assistant being run from an arch linux command line. When asked a question please provide concise responses. When providing code samples, include only the code block with no additional text. Additional context for the user question may be provided in triple quotes.".to_string();
     let mut messages = vec![
         ChatCompletionMessage {
             role: ChatCompletionMessageRole::System,
@@ -56,8 +64,9 @@ async fn main() {
     let mut user_prompt = args.join(" ");
 
     if let Ok(Some(value)) = get_std_in() {
-        user_prompt.push('\n');
+        user_prompt.push_str("\n\"\"\"\n");
         user_prompt.push_str(&value);
+        user_prompt.push_str("\n\"\"\"");
     }
 
     messages.push(ChatCompletionMessage {
@@ -67,12 +76,11 @@ async fn main() {
         function_call: None
     });
 
-    // Call the OpenAI API and process the response.
-    let chat_completion = ChatCompletion::builder("gpt-3.5-turbo", messages)
+    // Call the OpenAI API with the dynamic model selection
+    let chat_completion = ChatCompletion::builder(&model, messages)
         .create()
         .await
         .expect("Failed to create chat completion.");
-
     let response_message = chat_completion.choices.first().expect("No response from chat completion.").message.clone();
     let formatted_message = remove_backtick_lines(&response_message.content.unwrap_or_else(|| "Error getting response.".to_string()).trim());
 

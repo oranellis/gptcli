@@ -2,9 +2,8 @@
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 
-if ! cargo build --release &>/dev/null; then
-	echo -e "Failed to build gptcli, checking code..."
-	cargo check
+if ! cargo build --release; then
+	echo -e "Failed to build gptcli"
 	exit 1
 else
 	echo -e "Built gptcli binary"
