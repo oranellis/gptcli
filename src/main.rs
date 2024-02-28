@@ -46,7 +46,6 @@ async fn main() {
 
     // Check for OPENAI_DEFAULT_MODEL environment variable to set the model dynamically
     let model = env::var("OPENAI_DEFAULT_MODEL").unwrap_or_else(|_| "gpt-3.5-turbo".to_string());
-    println!("Model: {}", &model);
 
     let system_message = "You are a helpful general assistant being run from an arch linux command line. When asked a question please provide concise responses. When providing code samples, include only the code block with no additional text. Additional context for the user question may be provided in triple quotes.".to_string();
     let mut messages = vec![

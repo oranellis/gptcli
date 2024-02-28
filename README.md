@@ -1,4 +1,3 @@
-Model: gpt-4-turbo-preview
 # GPT CLI
 
 GPT CLI is a versatile command-line tool that enables ChatGPT integration into CLI and Vim environments. It facilitates executing ChatGPT queries from anywhere cli programs can be run, making it easier to analyze or modify code, generate documentation, and more.
